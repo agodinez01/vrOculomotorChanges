@@ -1,9 +1,11 @@
 import pandas as pd
 import numpy as np
+import os
 
 subject = ['jg', 'sd', 'as', 'jz', 'ri', 'am', 'wc', 'cs', 'aq', 'ez', 'cw', 'jk', 'gr', 'lf', 'aa', 'ns', 'er', 'cm', 'eb', 'rr']
 myopia = ['noMyopia', 'noMyopia', 'noMyopia', 'myopia', 'noMyopia', 'noMyopia', 'noMyopia', 'noMyopia', 'myopia', 'myopia', 'myopia', 'myopia', 'noMyopia', 'myopia', 'noMyopia', 'myopia', 'myopia', 'myopia', 'myopia', 'noMyopia']
 subjects = np.hstack([subject]*11)
+myopiaLabel = np.hstack([myopia]*11)
 
 #Measures taken before VR
 verNearBO_blr = [16, 14, 10, 12, 10, 27.5, 12, 12, 14, 11, 21.5, 20.5, 11, 16, 11, 25, 40, 7, 9, 11]
@@ -61,7 +63,7 @@ verBlrDbl = np.hstack((verLabel, verLabel, phoBD, accBD))
 distance = np.hstack((distance, distanceP, accDistance))
 
 
-data = {'subject':subjects, 'vals':vals, 'measure':test, 'base':base, 'blurDouble':verBlrDbl, 'distance':distance}
+data = {'subject':subjects, 'myopia':myopiaLabel, 'vals':vals, 'measure':test, 'base':base, 'blurDouble':verBlrDbl, 'distance':distance}
 
 df = pd.DataFrame(data)
 df['condition'] = 'VR'
@@ -118,7 +120,7 @@ test = np.hstack((testV, testP, accLabel))
 base = np.hstack((base1, baseP, accNF))
 distance = np.hstack((distance, distanceP, accDistance))
 
-data1 = {'subject':subjects, 'vals':vals, 'measure':test, 'base':base, 'blurDouble':verBlrDbl, 'distance':distance}
+data1 = {'subject':subjects, 'myopia':myopiaLabel, 'vals':vals, 'measure':test, 'base':base, 'blurDouble':verBlrDbl, 'distance':distance}
 
 df1 = pd.DataFrame(data1)
 df1['condition'] = 'VR'
@@ -176,7 +178,7 @@ test = np.hstack((testV, testP, accLabel))
 base = np.hstack((base1, baseP, accNF))
 distance = np.hstack((distance, distanceP, accDistance))
 
-data2 = {'subject':subjects, 'vals':vals, 'measure':test, 'base':base, 'blurDouble':verBlrDbl, 'distance':distance}
+data2 = {'subject':subjects, 'myopia':myopiaLabel, 'vals':vals, 'measure':test, 'base':base, 'blurDouble':verBlrDbl, 'distance':distance}
 
 df2 = pd.DataFrame(data2)
 df2['condition'] = 'PC'
@@ -234,7 +236,7 @@ test = np.hstack((testV, testP, accLabel))
 base = np.hstack((base1, baseP, accNF))
 distance = np.hstack((distance, distanceP, accDistance))
 
-data3 = {'subject':subjects, 'vals':vals, 'measure':test, 'base':base, 'blurDouble':verBlrDbl, 'distance':distance}
+data3 = {'subject':subjects, 'myopia':myopiaLabel, 'vals':vals, 'measure':test, 'base':base, 'blurDouble':verBlrDbl, 'distance':distance}
 
 df3 = pd.DataFrame(data3)
 df3['condition'] = 'PC'
