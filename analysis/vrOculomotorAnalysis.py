@@ -10,7 +10,7 @@ from scipy import stats
 os.chdir('C:/Users/angie/Git Root/vrOculomotorChanges/data')
 allData = pd.read_csv('subjectData.csv')
 myopiaClassification = pd.read_csv('myopiaClassification.csv')
-results_dir = "C:/Users/angie/Git Root/vrOculomotorChanges/figs/"
+results_dir = "C:/Users/angie/Git Root/vrOculomotorChanges/figs/individualPlots/"
 
 vergenceTable = allData.loc[allData.measure=='vergence']
 
@@ -21,13 +21,6 @@ sns.set('poster', palette='colorblind')
 sns.set_style('white')
 
 subjects = myopiaClassification.subject.unique()
-
-def addMyopia():
-    for sub in subjects:
-        allData['myopia'] = myopiaClassification.myopia[myopiaClassification.subject==sub]
-    return allData
-
-addMyopia()
 
 #Function to make 1:1 (pre-post) plots comparing VR and PC values
 #Result 1. Increase in convergence blur range at near (BO prism) in VRHMD condition compared to PC.
@@ -53,37 +46,33 @@ def makePlot(VRx_vals, VRy_vals, PCx_vals, PCy_vals, title):
     myopiaDF['condition'] = np.hstack((vrLable, pcLable))
     myopiaDF['delta'] = myopiaDF['y_vals'] - myopiaDF['x_vals']
 
-    # sns.lmplot(x='x_vals', y='y_vals', data=myopiaDF, hue='condition', fit_reg=False, palette='colorblind')
-    # plt.plot([0, 40], [0, 40], 'k--')
-    # #plt.text(25, 5, s='p= %.5s' %deltap, style='italic', size='x-small')
-    # plt.text(25, 4, s='VR: p= %.5s' % VRp, style='italic', size='xx-small')
-    # plt.text(25, 1, s='PC: p= %.5s' %PCp, style='italic', size='xx-small')
-    # plt.yticks(np.arange(10, max(myopiaDF.y_vals) + 10, step=10))
-    # plt.xticks(np.arange(10, max(myopiaDF.x_vals) + 10, step=10))
-    # #plt.title(title)
-    #
-    # #xLabelPlot = '(\u0394) Vergence'
-    # #plt.xlabel('Pre Test ' + xLabelPlot)
-    # plt.xlabel('Baseline vergence')
-    # #yLabelPlot = '(\u0394) Vergence'
-    # plt.ylabel('Post-task vergence')
-    #
-    # plt.savefig(fname=results_dir + title.replace(" ", "") + '_scatterplot.pdf', bbox_inches='tight', format='pdf', dpi=300)
-    # plt.show()
-    #
-    # plt.clf()
-    #
-    # sns.violinplot(x='condition', y='delta', data=myopiaDF, palette='colorblind')
-    # plt.ylabel('\u0394 Vergence')
-    # #plt.title(title)
-    # plt.text(0.30, -8, s='p= %.5s' % deltap, style='italic', size='x-small')
-    #
-    # plt.savefig(fname=results_dir + title.replace(" ", "") + '_boxplot.pdf', bbox_inches='tight', format='pdf', dpi=300)
-    # plt.show()
-    #
-    # plt.clf()
-    #
-    # sns.lmplot(x=myopiaDF.delta[myopiaDF.condition=='PC'], y=myopiaDF.delta[myopiaDF.condition=='VR'], data=myopiaDF, hue='myopia', palette='colorblind')
+    sns.lmplot(x='x_vals', y='y_vals', data=myopiaDF, hue='condition', fit_reg=False, palette='colorblind')
+    plt.plot([0, 40], [0, 40], 'k--')
+    #plt.text(25, 5, s='p= %.5s' %deltap, style='italic', size='x-small')
+    plt.text(25, 4, s='VR: p= %.5s' % VRp, style='italic', size='xx-small')
+    plt.text(25, 1, s='PC: p= %.5s' %PCp, style='italic', size='xx-small')
+    plt.yticks(np.arange(10, max(myopiaDF.y_vals) + 10, step=10))
+    plt.xticks(np.arange(10, max(myopiaDF.x_vals) + 10, step=10))
+    #plt.title(title)
+
+    #xLabelPlot = '(\u0394) Vergence'
+    #plt.xlabel('Pre Test ' + xLabelPlot)
+    plt.xlabel('Pre-task vergence')
+    #yLabelPlot = '(\u0394) Vergence'
+    plt.ylabel('Post-task vergence')
+
+    plt.savefig(fname=results_dir + title.replace(" ", "") + '_scatterplot.pdf', bbox_inches='tight', format='pdf', dpi=300)
+    plt.show()
+
+    plt.clf()
+
+    sns.violinplot(x='condition', y='delta', data=myopiaDF, palette='colorblind')
+    plt.ylabel('\u0394 Vergence')
+    #plt.title(title)
+    plt.text(0.30, -8, s='p= %.5s' % deltap, style='italic', size='x-small')
+
+    plt.savefig(fname=results_dir + title.replace(" ", "") + '_boxplot.pdf', bbox_inches='tight', format='pdf', dpi=300)
+    plt.show()
 
 def ttestAnalysis(preVerVR, postVerVR, preVerPC, postVerPC):
     [VRval, VRp] = stats.ttest_rel(preVerVR, postVerVR)
