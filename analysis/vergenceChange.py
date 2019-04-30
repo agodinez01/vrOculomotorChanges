@@ -6,6 +6,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy import stats
 
+# This script analyzes whether vergence in general is changing. Meaning both convergence and divergence are
+# expanding or whether only convergence ranges are changing. Script makes plots and saves them in
+# project_path/figs/vergence.
+
 #Load variables
 os.chdir('C:/Users/angie/Git Root/vrOculomotorChanges/data')
 allData = pd.read_csv('subjectData.csv')
@@ -68,5 +72,3 @@ for blrDbl in blrDblVals:
 
         print(plotTitle)
         scatterPlot('convergenceDelta', 'divergenceDelta', frame, 'myopiaStatus', plotTitle)
-
-# nearBreakTable
