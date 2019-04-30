@@ -11,35 +11,62 @@ os.chdir('C:/Users/angie/Git Root/vrOculomotorChanges/data')
 allData = pd.read_csv('subjectData.csv')
 results_dir = "C:/Users/angie/Git Root/vrOculomotorChanges/figs/vergence/"
 
-nearBreakTable = allData.loc[(allData.measure=='vergence') & (allData.distance=='near') & (allData.blurDouble=='blur')
-                             & (allData.condition=='VR')]
-nearBreakTable = nearBreakTable.drop(columns=['measure', 'distance', 'blurDouble', 'condition'])
+dataFrame = allData.loc[(allData.measure == 'vergence') & (allData.condition == 'VR')]
+dataFrame = dataFrame.drop(columns=['measure', 'condition'])
 
-convergenceDelta = np.subtract(nearBreakTable.vals[(nearBreakTable.order=='post') & (nearBreakTable.base=='out')],
-                               nearBreakTable.vals[(nearBreakTable.order=='pre') & (nearBreakTable.base=='out')]).tolist()
-divergenceDelta = np.subtract(nearBreakTable.vals[(nearBreakTable.order=='post') & (nearBreakTable.base=='in')],
-                               nearBreakTable.vals[(nearBreakTable.order=='pre') & (nearBreakTable.base=='in')]).tolist()
+distanceVals = dataFrame.distance.unique()
+blrDblVals = dataFrame.blurDouble.unique()
+baseVals = dataFrame.base.unique()
 
 #unique vals
-subjects = nearBreakTable.subject[0:20].tolist()
-myopia = nearBreakTable.myopia[0:20].tolist()
-d = {'subject':subjects,'myopiaStatus':myopia, 'convergenceDelta':convergenceDelta, 'divergenceDelta':divergenceDelta}
-frame = pd.DataFrame(d)
+subjects = dataFrame.subject[0:20].tolist()
+myopia = dataFrame.myopia[0:20].tolist()
 
-def scatterPlot(x, y, dataFrame, hue):
+def scatterPlot(x, y, dataFrame, hue, title):
     # Plot params
     font = {'weight': 'bold', 'size': 20}
     matplotlib.rc('font', **font)
     sns.set('poster', palette='colorblind')
     sns.set_style('whitegrid')
 
+    #TODO: Make sure x and y labels work.
     sns.scatterplot(x=x, y=y, data=dataFrame, hue=hue)
+    plt.xlabel('Convergence change (\u0394)')
+    plt.ylabel('Divergence change (\u0394)')
+
     plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0., fontsize='xx-small')
     plt.hlines(0, min(dataFrame[x]), max(dataFrame[x]))
     plt.vlines(0, min(dataFrame[y]), max(dataFrame[y]))
-    plt.savefig(fname=results_dir + 'BreakVergenceChange.pdf', bbox_inches='tight',
+
+    plt.savefig(fname=results_dir + title + '.pdf', bbox_inches='tight',
                 format='pdf', dpi=300)
     plt.show()
 
-scatterPlot('convergenceDelta', 'divergenceDelta', frame, 'myopiaStatus')
+for blrDbl in blrDblVals:
+    for distance in distanceVals:
+        convergenceDelta = np.subtract(dataFrame.vals[(dataFrame.order == 'post') & (dataFrame.base == 'out') &
+                                                      (dataFrame.blurDouble == blrDbl) & (dataFrame.distance == distance)],
+                                       dataFrame.vals[(dataFrame.order == 'pre') & (dataFrame.base == 'out') &
+                                                      (dataFrame.blurDouble == blrDbl) & (dataFrame.distance == distance)]).tolist()
 
+        divergenceDelta = np.subtract(dataFrame.vals[(dataFrame.order == 'post') & (dataFrame.base == 'in') &
+                                                     (dataFrame.blurDouble == blrDbl) & (dataFrame.distance == distance)],
+                                      dataFrame.vals[(dataFrame.order == 'pre') & (dataFrame.base == 'in') &
+                                                     (dataFrame.blurDouble == blrDbl) & (dataFrame.distance == distance)]).tolist()
+
+        d = {'subject': subjects, 'myopiaStatus': myopia, 'convergenceDelta': convergenceDelta, 'divergenceDelta': divergenceDelta}
+        frame = pd.DataFrame(d)
+
+        if (blrDbl == 'blur') & (distance == 'near'):
+            plotTitle = 'Near blur'
+        elif (blrDbl == 'blur') & (distance == 'far'):
+            plotTitle = 'Far blur'
+        elif (blrDbl == 'double') & (distance == 'near'):
+            plotTitle = 'Near break'
+        elif (blrDbl == 'double') & (distance == 'far'):
+            plotTitle = 'Far break'
+
+        print(plotTitle)
+        scatterPlot('convergenceDelta', 'divergenceDelta', frame, 'myopiaStatus', plotTitle)
+
+# nearBreakTable
