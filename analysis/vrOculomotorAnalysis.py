@@ -5,6 +5,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib as matplotlib
 from scipy import stats
+import matplotlib.patches as mpatches
 
 #Load variables
 os.chdir('C:/Users/angie/Git Root/vrOculomotorChanges/data')
@@ -62,7 +63,7 @@ def makePlot(VRx_vals, VRy_vals, PCx_vals, PCy_vals, title):
     plt.ylabel('Post-task vergence')
 
     plt.savefig(fname=results_dir + title.replace(" ", "") + '_scatterplot.pdf', bbox_inches='tight', format='pdf', dpi=300)
-    plt.show()
+    #plt.show()
 
     plt.clf()
 
@@ -72,7 +73,7 @@ def makePlot(VRx_vals, VRy_vals, PCx_vals, PCy_vals, title):
     plt.text(0.30, -8, s='p= %.5s' % deltap, style='italic', size='x-small')
 
     plt.savefig(fname=results_dir + title.replace(" ", "") + '_boxplot.pdf', bbox_inches='tight', format='pdf', dpi=300)
-    plt.show()
+    #plt.show()
 
 def ttestAnalysis(preVerVR, postVerVR, preVerPC, postVerPC):
     [VRval, VRp] = stats.ttest_rel(preVerVR, postVerVR)
@@ -85,6 +86,15 @@ def ttestAnalysis(preVerVR, postVerVR, preVerPC, postVerPC):
 
     vrChangeMean = np.mean(deltaVR)
     pcChangeMean = np.mean(deltaPC)
+
+    vrPositiveChange = np.mean([x for x in deltaVR if x > 0])
+    vrNegativeChange = np.mean([x for x in deltaVR if x < 0])
+    pcPositiveChange = np.mean([x for x in deltaPC if x > 0])
+    pcNegativeChange = np.mean([x for x in deltaPC if x < 0])
+
+
+    print('vrPositiveChange = %s' % vrPositiveChange, 'vrNegativeChange = %s' % vrNegativeChange,
+          'pcPositiveChange = %s' % pcPositiveChange, 'pcNegativeChange = %s' % pcNegativeChange)
 
     #TODO: T-test of the difference between pre and post for PC and VR
     print('vrChangeMean = %s' % vrChangeMean, 'VRp = %s' % VRp, 'pcChangeMean = %s' % pcChangeMean, 'PCp = %s' % PCp, 'deltaVal = %s' % deltaVal, 'deltap = %s' % deltap)
@@ -129,3 +139,47 @@ def getVals_Plot():
 getVals_Plot()
 
 distanceVals
+
+plt.clf()
+
+def noDataFigs(type):
+    font = {'weight': 'bold', 'size': 20}
+    matplotlib.rc('font', **font)
+    sns.set('poster', palette='colorblind')
+    sns.set_style('white')
+
+    plt.plot([0, 40], [0, 40], 'k--')
+    plt.yticks(np.arange(10, 50, step=10))
+    plt.xticks(np.arange(10, 50, step=10))
+
+    plt.xlabel('Pre-task vergence')
+    plt.ylabel('Post-task vergence')
+
+    if type == 'blank':
+        plt.savefig(fname=results_dir + 'NoDataFig1' + '.png', bbox_inches='tight', format='png', dpi=300)
+
+    if type == 'triangles':
+        triangle1 = mpatches.Polygon(np.array([[0, 0], [0, 40], [40, 40]]), fc="mediumAquaMarine")
+        triangle2 = mpatches.Polygon(np.array([[40, 40], [40, 0], [0, 0]]), fc='salmon')
+
+        ax = plt.axes([0, 0, 1, 1])
+        ax.add_artist(triangle1)
+        ax.add_artist(triangle2)
+
+        plt.plot([0, 40], [0, 40], 'k--')
+        plt.yticks(np.arange(10, 50, step=10))
+        plt.xticks(np.arange(10, 50, step=10))
+
+        plt.xlabel('Pre-task vergence')
+        plt.ylabel('Post-task vergence')
+
+        plt.savefig(fname=results_dir + 'NoDataFig1_triangles' + '.png', bbox_inches='tight', format='png', dpi=300)
+
+        plt.clf()
+
+noDataFigs('blank')
+noDataFigs('triangles')
+
+#plt.show()
+
+#plt.savefig(fname=results_dir + 'NoDataFig1_triangles' + '.png', bbox_inches='tight', format='png', dpi=300)
